@@ -18,14 +18,15 @@
 package openvpn
 
 import (
-	"github.com/mysteriumnetwork/node/openvpn/management"
+	"github.com/mysteriumnetwork/node/openvpn/extcmd"
+	"github.com/mysteriumnetwork/node/openvpn/extcmd/management"
 	"github.com/mysteriumnetwork/node/openvpn/tls"
 	"github.com/mysteriumnetwork/node/session"
 )
 
 // NewClient creates openvpn client with given config params
 func NewClient(openvpnBinary string, config *ClientConfig, middlewares ...management.Middleware) Process {
-	return CreateNewProcess(openvpnBinary, config.GenericConfig, middlewares...)
+	return extcmd.CreateNewProcess(openvpnBinary, config.GenericConfig, middlewares...)
 }
 
 //VPNConfig structure represents VPN configuration options for given session
