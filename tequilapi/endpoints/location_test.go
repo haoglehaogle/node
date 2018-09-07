@@ -25,6 +25,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/mysteriumnetwork/node/core/connection"
+	"github.com/mysteriumnetwork/node/core/node/dto"
 	"github.com/mysteriumnetwork/node/identity"
 	"github.com/mysteriumnetwork/node/ip"
 	"github.com/mysteriumnetwork/node/location"
@@ -35,7 +36,7 @@ type fakeManagerForLocation struct {
 	onStatusReturn connection.ConnectionStatus
 }
 
-func (fm *fakeManagerForLocation) Connect(consumerID identity.Identity, providerID identity.Identity) error {
+func (fm *fakeManagerForLocation) Connect(consumerID identity.Identity, providerID identity.Identity, options dto.ConnectOptions) error {
 	return nil
 }
 
