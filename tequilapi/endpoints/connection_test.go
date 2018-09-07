@@ -27,7 +27,6 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/mysteriumnetwork/node/core/connection"
-	"github.com/mysteriumnetwork/node/core/node/dto"
 	"github.com/mysteriumnetwork/node/identity"
 	"github.com/mysteriumnetwork/node/ip"
 	"github.com/mysteriumnetwork/node/openvpn/middlewares/client/bytescount"
@@ -44,7 +43,7 @@ type fakeManager struct {
 	requestedProvider  identity.Identity
 }
 
-func (fm *fakeManager) Connect(consumerID identity.Identity, providerID identity.Identity, options dto.ConnectOptions) error {
+func (fm *fakeManager) Connect(consumerID identity.Identity, providerID identity.Identity, options connection.ConnectOptions) error {
 	fm.requestedConsumer = consumerID
 	fm.requestedProvider = providerID
 	return fm.onConnectReturn

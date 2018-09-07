@@ -24,7 +24,6 @@ import (
 	log "github.com/cihub/seelog"
 	"github.com/julienschmidt/httprouter"
 	"github.com/mysteriumnetwork/node/core/connection"
-	"github.com/mysteriumnetwork/node/core/node/dto"
 	"github.com/mysteriumnetwork/node/identity"
 	"github.com/mysteriumnetwork/node/ip"
 	"github.com/mysteriumnetwork/node/openvpn/middlewares/client/bytescount"
@@ -35,6 +34,15 @@ import (
 // statusConnectCancelled indicates that connect request was cancelled by user. Since there is no such concept in REST
 // operations, custom client error code is defined. Maybe in later times a better idea will come how to handle these situations
 const statusConnectCancelled = 499
+
+// ConnectOptions holds tequilapi connect options
+// swagger:model ConnectOptionsDTO
+type ConnectOptions struct {
+	// kill switch option restricting communication only through VPN
+	// required: false
+	// example: true
+	DisableKillSwitch bool `json:"killSwitch"`
+}
 
 // swagger:model ConnectionRequestDTO
 type connectionRequest struct {
@@ -50,7 +58,7 @@ type connectionRequest struct {
 
 	// connect options
 	// required: false
-	ConnectOptions dto.ConnectOptions `json:"connectOptions,omitempty"`
+	ConnectOptions ConnectOptions `json:"connectOptions,omitempty"`
 }
 
 // swagger:model ConnectionStatusDTO
@@ -168,7 +176,8 @@ func (ce *ConnectionEndpoint) Create(resp http.ResponseWriter, req *http.Request
 		return
 	}
 
-	err = ce.manager.Connect(identity.FromAddress(cr.ConsumerID), identity.FromAddress(cr.ProviderID), cr.ConnectOptions)
+	connectOptions := getConnectOptions(cr)
+	err = ce.manager.Connect(identity.FromAddress(cr.ConsumerID), identity.FromAddress(cr.ProviderID), connectOptions)
 
 	if err != nil {
 		switch err {
@@ -294,6 +303,10 @@ func toConnectionRequest(req *http.Request) (*connectionRequest, error) {
 		return nil, err
 	}
 	return &connectionRequest, nil
+}
+
+func getConnectOptions(cr *connectionRequest) connection.ConnectOptions {
+	return connection.ConnectOptions{DisableKillSwitch: cr.ConnectOptions.DisableKillSwitch}
 }
 
 func validateConnectionRequest(cr *connectionRequest) *validation.FieldErrorMap {

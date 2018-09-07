@@ -94,7 +94,10 @@ func (c *GenericConfig) SetTLSCrypt(cryptFile string) {
 }
 
 // RestrictReconnects describes conditions which enforces client to close a session in case of failed authentication
-func (c *GenericConfig) RestrictReconnects() {
+func (c *GenericConfig) RestrictReconnects(disableKillSwitch bool) {
+	if !disableKillSwitch {
+		return
+	}
 	c.SetParam("connect-retry-max", "2")
 	c.SetParam("remap-usr1", "SIGTERM")
 	c.SetFlag("single-session")
